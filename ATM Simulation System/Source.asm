@@ -92,7 +92,13 @@ CustLoginFail:
     mov edx, OFFSET msgWrongStr
     call WriteString
     call CrLf
-    jmp MainMenu
+
+    ; wait 1 second (1000 ms)
+    mov eax, 500        ; 1 second
+    call Delay
+
+    jmp MainMenu      ; go straight back, no repeat
+
 
 CustMenu:
     ; do NOT clear screen here; we stay on the same interface
@@ -220,7 +226,12 @@ AdmLoginFail:
     mov edx, OFFSET msgWrongStr
     call WriteString
     call CrLf
-    jmp MainMenu
+
+    mov eax, 500        ; 1 second
+    call Delay
+
+    jmp MainMenu ; go straight back, no repeat
+
 
 AdmMenu:
     mov edx, OFFSET adminMenuStr
