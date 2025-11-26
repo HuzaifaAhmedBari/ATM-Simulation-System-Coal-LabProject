@@ -8,7 +8,6 @@ INCLUDE Irvine32.inc
     eurRate         DWORD   300
     sarRate         DWORD   75
 
-    ; ================= STRINGS =================
     mainTitleStr    BYTE    "===== ATM SYSTEM =====",0
     mainMenuStr     BYTE    0Dh,0Ah,"1. Customer Portal",0Dh,0Ah, \
                            "2. Admin Portal",0Dh,0Ah, \
@@ -33,36 +32,36 @@ INCLUDE Irvine32.inc
                            "6. Back to Main Menu",0Dh,0Ah, \
                            "Choice: ",0
 
-    msgConvChoiceStr BYTE "1. Convert Full Balance | 2. Enter Amount : ",0
-    msgEnterAmountStr BYTE "Enter amount to convert (PKR): ",0
-    msgEnterPINStr   BYTE "Enter Customer PIN: ",0
-    msgEnterAdminStr BYTE "Enter Admin Password: ",0
-    msgBalanceStr    BYTE "Current Balance (PKR): ",0
-    msgDepositStr    BYTE "Enter Deposit Amount (PKR): ",0
-    msgWithdrawStr   BYTE "Enter Withdraw Amount (PKR): ",0
-    msgNewPINStr     BYTE "Enter new PIN (4 digits): ",0
-    msgNewUSDStr     BYTE "Enter new USD rate (PKR per USD): ",0
-    msgNewEURStr     BYTE "Enter new EUR rate (PKR per EUR): ",0
-    msgNewSARStr     BYTE "Enter new SAR rate (PKR per SAR): ",0
-    msgRefillStr     BYTE "Enter refill amount (PKR): ",0
-    msgSuccessStr    BYTE "Operation Successful.",0
-    msgFailedStr     BYTE "Operation Failed.",0
-    msgInsuffStr     BYTE "Insufficient Balance!",0
-    msgWrongStr      BYTE "Invalid Password / PIN!",0
+    ConversionChoice BYTE "1. Convert Full Balance | 2. Enter Amount : ",0
+    EnterAmount      BYTE "Enter amount to convert (PKR): ",0
+    EnterPIN         BYTE "Enter Customer PIN: ",0
+    EnterAdmin       BYTE "Enter Admin Password: ",0
+    CurrentBalance   BYTE "Current Balance (PKR): ",0
+    DepositAmount    BYTE "Enter Deposit Amount (PKR): ",0
+    Withdraw         BYTE "Enter Withdraw Amount (PKR): ",0
+    NewPIN           BYTE "Enter new PIN (4 digits): ",0
+    NewUSD           BYTE "Enter new USD rate (PKR per USD): ",0
+    NewEUR           BYTE "Enter new EUR rate (PKR per EUR): ",0
+    NewSAR           BYTE "Enter new SAR rate (PKR per SAR): ",0
+    RefillAmount     BYTE "Enter refill amount (PKR): ",0
+    OpSuccess        BYTE "Operation Successful.",0
+    OpFailed         BYTE "Operation Failed.",0
+    Insufficient     BYTE "Insufficient Balance!",0
+    Invalid          BYTE "Invalid Password / PIN!",0
 
-    msgBalUSDStr     BYTE "Balance in USD (approx): ",0
-    msgBalEURStr     BYTE "Balance in EUR (approx): ",0
-    msgBalSARStr     BYTE "Balance in SAR (approx): ",0
+    BalUSD           BYTE "Balance in USD (approx): ",0
+    BalEUR           BYTE "Balance in EUR (approx): ",0
+    BalSAR           BYTE "Balance in SAR (approx): ",0
 
-    msgRateHeaderStr BYTE "---- Current Exchange Rates ----",0
-    msgUSDRateStr    BYTE "USD Rate (PKR per USD): ",0
-    msgEURRateStr    BYTE "EUR Rate (PKR per EUR): ",0
-    msgSARRateStr    BYTE "SAR Rate (PKR per SAR): ",0
+    RateHeading      BYTE "---- Current Exchange Rates ----",0
+    USDRatemsg       BYTE "USD Rate (PKR per USD): ",0
+    EURRatemsg       BYTE "EUR Rate (PKR per EUR): ",0
+    SARRatemsg       BYTE "SAR Rate (PKR per SAR): ",0
 
     pinAttempts DWORD 0
-    msgRetryLimitStr BYTE "Retry limit reached. Returning to Main Menu.",0
-    msgCustLoginSuccess BYTE "Login Successful. Redirecting to Customer Menu...",0
-    msgAdminLoginSuccess BYTE "Login Successful. Redirecting to Admin Menu...",0
+    RetryLimit       BYTE "Retry limit reached. Returning to Main Menu.",0
+    CustLoginSuccess BYTE "Login Successful. Redirecting to Customer Menu...",0
+    AdmLoginSuccess  BYTE "Login Successful. Redirecting to Admin Menu...",0
 
 .code
     main PROC
@@ -89,7 +88,7 @@ INCLUDE Irvine32.inc
         mov pinAttempts, 0
 
     CustPINLoop:
-        mov edx, OFFSET msgEnterPINStr
+        mov edx, OFFSET EnterPIN
         call WriteString
         call ReadInt
         cmp eax, correctPIN
@@ -99,8 +98,7 @@ INCLUDE Irvine32.inc
         cmp pinAttempts, 3
         jl CustTryAgain
 
-        ; Retry limit reached (NO LOCK)
-        mov edx, OFFSET msgRetryLimitStr
+        mov edx, OFFSET RetryLimit
         call WriteString
         call CrLf
         mov eax, 1000
@@ -108,16 +106,16 @@ INCLUDE Irvine32.inc
         jmp MainMenu
 
     CustTryAgain:
-        mov edx, OFFSET msgWrongStr
+        mov edx, OFFSET Invalid
         call WriteString
         call CrLf
         jmp CustPINLoop
 
     CustLoginSuccess:
-        mov edx, OFFSET msgCustLoginSuccess
+        mov edx, OFFSET CustLoginSuccess
         call WriteString
         call CrLf
-        mov eax, 1000       ; 1 second delay
+        mov eax, 1000
         call Delay
         call Clrscr
         jmp CustMenu
@@ -141,36 +139,36 @@ INCLUDE Irvine32.inc
         jmp CustMenu
 
     CustShowBalance:
-        mov edx, OFFSET msgBalanceStr
+        mov edx, OFFSET CurrentBalance
         call WriteString
         mov eax, balance
         call WriteDec
         call CrLf
-        mov edx, OFFSET msgSuccessStr
+        mov edx, OFFSET OpSuccess
         call WriteString
         call CrLf
         jmp CustMenu
 
     CustDeposit:
-        mov edx, OFFSET msgDepositStr
+        mov edx, OFFSET DepositAmount
         call WriteString
         call ReadInt
         cmp eax, 0
         jle CustDepositFail
         add balance, eax
-        mov edx, OFFSET msgSuccessStr
+        mov edx, OFFSET OpSuccess
         call WriteString
         call CrLf
         jmp CustMenu
 
     CustDepositFail:
-        mov edx, OFFSET msgFailedStr
+        mov edx, OFFSET OpFailed
         call WriteString
         call CrLf
         jmp CustMenu
 
     CustWithdraw:
-        mov edx, OFFSET msgWithdrawStr
+        mov edx, OFFSET Withdraw
         call WriteString
         call ReadInt
         mov ebx, eax
@@ -180,25 +178,25 @@ INCLUDE Irvine32.inc
         cmp eax, ebx
         jb CustInsufficient
         sub balance, ebx
-        mov edx, OFFSET msgSuccessStr
+        mov edx, OFFSET OpSuccess
         call WriteString
         call CrLf
         jmp CustMenu
 
     CustWithdrawFail:
-        mov edx, OFFSET msgFailedStr
+        mov edx, OFFSET OpFailed
         call WriteString
         call CrLf
         jmp CustMenu
 
     CustInsufficient:
-        mov edx, OFFSET msgInsuffStr
+        mov edx, OFFSET Insufficient
         call WriteString
         call CrLf
         jmp CustMenu
 
     CustCurrencyMenu:
-        mov edx, OFFSET msgConvChoiceStr
+        mov edx, OFFSET ConversionChoice
         call WriteString
         call ReadInt
 
@@ -213,7 +211,7 @@ INCLUDE Irvine32.inc
         jmp PerformConversion
 
         ConvertCustomAmount:
-        mov edx, OFFSET msgEnterAmountStr
+        mov edx, OFFSET EnterAmount
         call WriteString
         call ReadInt
         cmp eax, 0
@@ -221,7 +219,7 @@ INCLUDE Irvine32.inc
 
     PerformConversion:
         ; ---- USD ----
-        mov edx, OFFSET msgBalUSDStr
+        mov edx, OFFSET BalUSD
         call WriteString
         mov ebx, usdRate
         xor edx, edx
@@ -231,7 +229,7 @@ INCLUDE Irvine32.inc
 
         ; ---- EUR ----
         mov eax, balance
-        mov edx, OFFSET msgBalEURStr
+        mov edx, OFFSET BalEUR
         call WriteString
         mov ebx, eurRate
         xor edx, edx
@@ -241,7 +239,7 @@ INCLUDE Irvine32.inc
 
         ; ---- SAR ----
         mov eax, balance
-        mov edx, OFFSET msgBalSARStr
+        mov edx, OFFSET BalSAR
         call WriteString
         mov ebx, sarRate
         xor edx, edx
@@ -252,29 +250,29 @@ INCLUDE Irvine32.inc
         jmp CustMenu
 
     CustViewRates:
-        mov edx, OFFSET msgRateHeaderStr
+        mov edx, OFFSET RateHeading
         call WriteString
         call CrLf
 
-        mov edx, OFFSET msgUSDRateStr
+        mov edx, OFFSET USDRatemsg
         call WriteString
         mov eax, usdRate
         call WriteDec
         call CrLf
 
-        mov edx, OFFSET msgEURRateStr
+        mov edx, OFFSET EURRatemsg
         call WriteString
         mov eax, eurRate
         call WriteDec
         call CrLf
 
-        mov edx, OFFSET msgSARRateStr
+        mov edx, OFFSET SARRatemsg
         call WriteString
         mov eax, sarRate
         call WriteDec
         call CrLf
 
-        mov edx, OFFSET msgSuccessStr
+        mov edx, OFFSET OpSuccess
         call WriteString
         call CrLf
         jmp CustMenu
@@ -284,7 +282,7 @@ INCLUDE Irvine32.inc
 
     AdmLogin:
         call Clrscr
-        mov edx, OFFSET msgEnterAdminStr
+        mov edx, OFFSET EnterAdmin
         call WriteString
         call ReadInt
         cmp eax, adminPass
@@ -292,18 +290,18 @@ INCLUDE Irvine32.inc
         jmp AdmLoginSuccess
 
     AdmLoginFail:
-        mov edx, OFFSET msgWrongStr
+        mov edx, OFFSET Invalid
         call WriteString
         call CrLf
-        mov eax, 1000
+        mov eax, 500
         call Delay
         jmp MainMenu
 
     AdmLoginSuccess:
-        mov edx, OFFSET msgAdminLoginSuccess
+        mov edx, OFFSET AdmLoginSuccess
         call WriteString
         call CrLf
-        mov eax, 1000       ; 1 second delay
+        mov eax, 1000
         call Delay
         call Clrscr
         jmp AdmMenu
@@ -327,87 +325,88 @@ INCLUDE Irvine32.inc
         jmp AdmMenu
 
     AdmViewBalance:
-        mov edx, OFFSET msgBalanceStr
+        mov edx, OFFSET CurrentBalance
         call WriteString
         mov eax, balance
         call WriteDec
         call CrLf
-        mov edx, OFFSET msgSuccessStr
+        mov edx, OFFSET OpSuccess
         call WriteString
         call CrLf
         jmp AdmMenu
 
     AdmResetPIN:
-        mov edx, OFFSET msgNewPINStr
+        mov edx, OFFSET NewPIN
         call WriteString
         call ReadInt
         cmp eax, 1000
         jb AdmResetPINFail
+        cmp eax, 9999
+        ja AdmResetPINFail
         mov correctPIN, eax
-        mov edx, OFFSET msgSuccessStr
+        mov edx, OFFSET OpSuccess
         call WriteString
         call CrLf
         jmp AdmMenu
 
     AdmResetPINFail:
-        mov edx, OFFSET msgFailedStr
+        mov edx, OFFSET OpFailed
         call WriteString
         call CrLf
         jmp AdmMenu
 
     AdmChangeRates:
-        mov edx, OFFSET msgNewUSDStr
+        mov edx, OFFSET NewUSD
         call WriteString
         call ReadInt
         mov usdRate, eax
-        mov edx, OFFSET msgNewEURStr
+        mov edx, OFFSET NewEUR
         call WriteString
         call ReadInt
         mov eurRate, eax
-        mov edx, OFFSET msgNewSARStr
+        mov edx, OFFSET NewSAR
         call WriteString
         call ReadInt
         mov sarRate, eax
-        mov edx, OFFSET msgSuccessStr
+        mov edx, OFFSET OpSuccess
         call WriteString
         call CrLf
         jmp AdmMenu
 
     AdmRefill:
-        mov edx, OFFSET msgRefillStr
+        mov edx, OFFSET RefillAmount
         call WriteString
         call ReadInt
         add balance, eax
-        mov edx, OFFSET msgSuccessStr
+        mov edx, OFFSET OpSuccess
         call WriteString
         call CrLf
         jmp AdmMenu
 
-    ; -------- NEW FEATURE --------
     AdmViewRates:
-        mov edx, OFFSET msgRateHeaderStr
+        mov edx, OFFSET RateHeading
         call WriteString
         call CrLf
 
-        mov edx, OFFSET msgUSDRateStr
+        mov edx, OFFSET USDRatemsg
         call WriteString
         mov eax, usdRate
         call WriteDec
         call CrLf
 
-        mov edx, OFFSET msgEURRateStr
+        mov edx, OFFSET EURRatemsg
         call WriteString
         mov eax, eurRate
         call WriteDec
         call CrLf
 
-        mov edx, OFFSET msgSARRateStr
+        mov edx, OFFSET SARRatemsg
         call WriteString
         mov eax, sarRate
         call WriteDec
         call CrLf
 
-        mov edx, OFFSET msgSuccessStr
+        mov edx, OFFSET OpSuccess
         call WriteString
         call CrLf
         jmp AdmMenu
