@@ -12,7 +12,6 @@ INCLUDE Irvine32.inc
     mainMenuStr     BYTE    0Dh,0Ah,"1. Customer Portal",0Dh,0Ah, \
                            "2. Admin Portal",0Dh,0Ah, \
                            "3. Exit",0Dh,0Ah, \
-                           "4. My NAme",0Dh,0Ah, \
                            "Select Option: ",0
 
     custMenuStr     BYTE    0Dh,0Ah,"----- CUSTOMER MENU -----",0Dh,0Ah, \
@@ -80,8 +79,6 @@ INCLUDE Irvine32.inc
         je AdmLogin
         cmp eax, 3
         je ExitProgram
-        cmp eax, 4
-        je Admlogin
         jmp MainMenu
 
 
