@@ -12,6 +12,7 @@ INCLUDE Irvine32.inc
     mainMenuStr     BYTE    0Dh,0Ah,"1. Customer Portal",0Dh,0Ah, \
                            "2. Admin Portal",0Dh,0Ah, \
                            "3. Exit",0Dh,0Ah, \
+                           "4. My NAme",0Dh,0Ah, \
                            "Select Option: ",0
 
     custMenuStr     BYTE    0Dh,0Ah,"----- CUSTOMER MENU -----",0Dh,0Ah, \
@@ -79,9 +80,10 @@ INCLUDE Irvine32.inc
         je AdmLogin
         cmp eax, 3
         je ExitProgram
+        cmp eax, 4
+        je Admlogin
         jmp MainMenu
 
-    ; ---------------- CUSTOMER ----------------
 
     CustLogin:
         call Clrscr
@@ -92,7 +94,7 @@ INCLUDE Irvine32.inc
         call WriteString
         call ReadInt
         cmp eax, correctPIN
-        je CustLoginSuccess
+        je CustLoginsSuccess
 
         inc pinAttempts
         cmp pinAttempts, 3
@@ -111,7 +113,7 @@ INCLUDE Irvine32.inc
         call CrLf
         jmp CustPINLoop
 
-    CustLoginSuccess:
+    CustLoginsSuccess:
         mov edx, OFFSET CustLoginSuccess
         call WriteString
         call CrLf
@@ -218,7 +220,6 @@ INCLUDE Irvine32.inc
         jle CustMenu
 
     PerformConversion:
-        ; ---- USD ----
         mov edx, OFFSET BalUSD
         call WriteString
         mov ebx, usdRate
@@ -227,7 +228,6 @@ INCLUDE Irvine32.inc
         call WriteDec
         call CrLf
 
-        ; ---- EUR ----
         mov eax, balance
         mov edx, OFFSET BalEUR
         call WriteString
@@ -237,7 +237,6 @@ INCLUDE Irvine32.inc
         call WriteDec
         call CrLf
 
-        ; ---- SAR ----
         mov eax, balance
         mov edx, OFFSET BalSAR
         call WriteString
@@ -278,7 +277,6 @@ INCLUDE Irvine32.inc
         jmp CustMenu
 
 
-    ; ---------------- ADMIN ----------------
 
     AdmLogin:
         call Clrscr
@@ -287,7 +285,7 @@ INCLUDE Irvine32.inc
         call ReadInt
         cmp eax, adminPass
         jne AdmLoginFail
-        jmp AdmLoginSuccess
+        jmp AdmLoginsSuccess
 
     AdmLoginFail:
         mov edx, OFFSET Invalid
@@ -297,7 +295,7 @@ INCLUDE Irvine32.inc
         call Delay
         jmp MainMenu
 
-    AdmLoginSuccess:
+    AdmLoginsSuccess:
         mov edx, OFFSET AdmLoginSuccess
         call WriteString
         call CrLf
